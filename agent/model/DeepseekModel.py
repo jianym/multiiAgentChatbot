@@ -2,7 +2,6 @@
 import json
 import aiohttp
 from agent.model.BaseModel import BaseModel
-#sk-4d119a86f0394ba8a5ada0def6d408aa
 import ssl
 
 
@@ -15,7 +14,7 @@ class DeepseekModel(BaseModel):
 
     api_url: str = "https://api.deepseek.com"
 
-    api_key: str = "sk-4d119a86f0394ba8a5ada0def6d408aa"
+    api_key: str = "***************************"
 
     def call(self):
         print("调用成功")
