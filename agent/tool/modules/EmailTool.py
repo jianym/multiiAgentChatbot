@@ -12,9 +12,9 @@ from agent.model.BaseModel import BaseModel
 # SMTP服务器,这里使用163邮箱
 mail_host = "smtp.qq.com"
 # 发件人邮箱
-mail_sender = "110714284@qq.com"
+mail_sender = "***************"
 # 邮箱授权码,注意这里不是邮箱密码,如何获取邮箱授权码,请看本文最后教程
-mail_license = "salvxkzkffpkbijf"
+mail_license = "***************"
 smtp_port = 587
 
 class EmailTool(Node):
