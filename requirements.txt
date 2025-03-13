@@ -1,0 +1,5 @@
+aiohttp==3.9.3
+celery==5.4.0
+duckduckgo_search==7.5.1
+fastapi==0.115.11
+SQLAlchemy==2.0.25
