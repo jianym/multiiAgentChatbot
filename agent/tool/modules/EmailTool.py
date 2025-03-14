@@ -9,37 +9,54 @@ from email.header import Header
 from agent.AgentGraph import Node
 import json
 from agent.model.BaseModel import BaseModel
+import config
+
 # SMTP服务器,这里使用163邮箱
-mail_host = "smtp.qq.com"
+mail_host = config.MAIL_HOST
 # 发件人邮箱
-mail_sender = "***************"
+mail_sender = config.MAIL_SNDDER
 # 邮箱授权码,注意这里不是邮箱密码,如何获取邮箱授权码,请看本文最后教程
-mail_license = "***************"
-smtp_port = 587
+mail_license = config.MAIL_LICENSE
+smtp_port = config.MAIL_PORT
 
 class EmailTool(Node):
 
     def getPrompt(self):
-        content = {"role": "system", "content":
-            f"你是一名邮件发送助手，可以使用已有工具解决问题: \n"
-            "你的工作职责是提取收件人邮箱，邮件主题，邮件内容并使用工具发送邮件\n"
-            "如果没有提取到邮件内容可以根据上下文生成 \n"
-            "如果邮件主题缺失可以从邮件内容出生成 \n"
-            "返回json格式:\n"
-            "{\"status\":2,\"reply\":\"...\",\"tool_use\": true, \"tool_name\":tool_name,\"args\": [...]}} \n"
-            "返回值说明： \n"
-            " status: 0 -> 收件人邮箱或邮件主题或邮件内容信息却失，需要用户补充, 2 -> 执行成功 \n" 
-            " reply: status为2 -> 问题解决信息, status为0 -> 需要补充的信息 \n"
-            " tool_use: true -> 需使用工具, false -> 不使用工具 \n"
-            " tool_name: 工具名称 \n"
-            " args: 参数列表 \n"
-            "已有工具信息: \n"
-            " -send(receivers: str, subject: str, content: str): receivers -> 接收人邮箱多个用逗号分隔, subject -> 邮件主题, content -> 邮件内容 \n"
-        }
-        return content
+          content = """
+          你是一名邮件发送助手，可以使用已有工具解决问题。以下是你的工作职责和任务描述:
+          1. 提取收件人邮箱、邮件主题、邮件内容并使用工具发送邮件。
+          2. 如果没有提取到邮件内容，可以根据上下文用户意图生成邮件内容
+          3. 如果邮件主题缺失，可以从邮件内容中生成邮件主题。
+          
+          返回json格式:
+          {"status": <int>,"reply": <string>,"tool_use": <bool>,"tool_name": <string>,"args": <list>}
+          
+          返回值说明:
+          - `status`：0 -> 收件人邮箱或邮件主题或邮件内容信息却失，需要用户补充, 2 -> 执行成功
+          - `reply`: `status` 为 2 -> 提供问题解决信息， `status` 为 0 -> 需要补充的信息 
+          - `tool_use`:  true -> 需使用工具, false -> 不使用工具
+          - `tool_name`: 使用的工具名称
+          - `args`: 工具所需的参数列表
+          
+          已有工具信息:
+          - `send(receivers: str, subject: str, content: str)`: 发送邮件
+            - `receivers`: 描述 -> 接收人邮箱，多个用逗号分隔； 验证 -> 不能为空，符合邮件格式
+            - `subject`: 描述 -> 邮件主题； 验证 -> 不能为空
+            - `content`: 描述 -> 邮件内容； 验证 -> 不能为空
+    
+          """
+          message = {"role": "system", "content": content}
+          return message
 
     def queryDesc(self) -> str:
-        return "这是一个通过提取收件人邮箱，邮件主题，邮件内容进行发送email的邮件工具，调用方时应保证传递的信息包含收件人邮箱，邮件主题，邮件内容等信息"
+        desc = """
+        EmailTool -> 这是一名邮件发送助手Agent，可以使用的工具如下:
+            - `send(receivers: str, subject: str, content: str)`: 立即发送邮件
+                - `receivers`:  描述 -> 接收人邮箱，多个用逗号分隔； 验证 -> 不能为空，符合邮件格式
+                - `subject`: 描述 -> 邮件主题； 验证 -> 不能为空
+                - `content`: 描述 -> 邮件内容； 验证 -> 不能为空
+        """
+        return desc
 
     def queryName(self) -> str:
         return "EmailTool"

@@ -6,10 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from agent.AgentTaskGraphBuild import taskGraph
 from common.TransactionManager import transactional, Propagation
 from dao.AgentTaskDao import agentTaskDao
-
+import config
 
 # 初始化 Celery 应用
-celeryApp = Celery('apps', broker='redis://127.0.0.1:6379/0', backend='redis://127.0.0.1:6379/1')
+celeryApp = Celery('apps', broker=config.REDIS_URL, backend=config.REDIS_BACKEND_URL)
 
 celeryApp.conf.update(
     timezone='Asia/Shanghai',

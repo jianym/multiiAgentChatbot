@@ -1,5 +1,5 @@
 # This is a sample Python script.
-from agent.tool import Tool
+from agent.AgentGraph import Node
 from agent.tool.AgentImport import agentImport
 from agent.AgentSimple import AgentSimple
 class AgentTool:
@@ -7,10 +7,12 @@ class AgentTool:
 
     def __init__(self):
         self.toolDict = {}
-        # searchModule = agentImport.loadAgent("modules/SearchTool.py", "SearchTool")
+        # searchTool = agentImport.loadAgent("modules/SearchTool.py", "SearchTool")
+        ScheduleTool = agentImport.loadAgent("modules/ScheduleTool.py", "ScheduleTool")
         emailModule = agentImport.loadAgent("modules/EmailTool.py", "EmailTool")
         # self.setTool("SearchTool", searchModule.instance)
         self.setTool("EmailTool", emailModule.instance)
+        self.setTool("ScheduleTool", ScheduleTool.instance)
         self.setTool("simpleAgent", AgentSimple())
 
 
@@ -18,13 +20,13 @@ class AgentTool:
     def queryAgents(self) -> str:
         content = ""
         for key in self.toolDict:
-            content += " - " + self.toolDict[key].queryName() + ": " + self.toolDict[key].queryDesc() + " /n"
+            content += self.toolDict[key].queryDesc()
         return content
 
     def getTool(self,name: str) -> str:
         return self.toolDict[name]
 
-    def setTool(self,name: str, tool: Tool):
+    def setTool(self,name: str, tool: Node):
         self.toolDict[name] = tool
 
 

@@ -3,7 +3,7 @@ import json
 import aiohttp
 from agent.model.BaseModel import BaseModel
 import ssl
-
+import config
 
 # 创建一个 SSLContext 来禁用证书验证
 ssl_context = ssl.create_default_context()
@@ -12,9 +12,9 @@ ssl_context.verify_mode = ssl.CERT_NONE
 
 class DeepseekModel(BaseModel):
 
-    api_url: str = "https://api.deepseek.com"
+    api_url: str = config.DEEPSEEK_URL
 
-    api_key: str = "***************************"
+    api_key: str = config.DEEPSEEK_API_Key
 
     def call(self):
         print("调用成功")

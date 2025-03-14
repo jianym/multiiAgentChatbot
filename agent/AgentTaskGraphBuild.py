@@ -12,7 +12,6 @@ class AgentTaskGraphBuild:
     async def start(self, messageNo: str, query: str):
 
         self.agentPlanning.appendMessage(messageNo, self.getUserPrompt(query))
-        print(self.agentPlanning.getMessage(messageNo))
         await self.agentPlanning.exec(messageNo, llm)
 
 taskGraph = AgentTaskGraphBuild()

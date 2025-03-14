@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from contextvars import ContextVar
-
+import config
 
 # 数据库配置
-DATABASE_URL = "mysql+aiomysql://root:12345678@127.0.0.1/agent_link"
+DATABASE_URL = config.DATABASE_URL
 engine = create_async_engine(DATABASE_URL, echo=True, future=True)
 SessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
