@@ -5,7 +5,7 @@ import config
 
 # 数据库配置
 DATABASE_URL = config.DATABASE_URL
-engine = create_async_engine(DATABASE_URL, echo=True, future=True)
+engine = create_async_engine(DATABASE_URL, echo=True, future=True,pool_pre_ping=True,  pool_size=10, max_overflow=20)
 SessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 # 上下文变量用于管理嵌套事务中的会话

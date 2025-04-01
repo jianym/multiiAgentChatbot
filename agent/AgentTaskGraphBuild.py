@@ -1,3 +1,5 @@
+import time
+
 from agent.AgentPlanning import AgentPlanning
 from agent.model.DeepseekModel import llm
 
@@ -6,12 +8,12 @@ class AgentTaskGraphBuild:
         self.agentPlanning = AgentPlanning()
 
     def getUserPrompt(self, prompt: str):
-        content = {"role": "user", "content": prompt}
+        content = {"time": time.time(), "role": "user", "content": prompt}
         return content
 
     async def start(self, messageNo: str, query: str):
 
         self.agentPlanning.appendMessage(messageNo, self.getUserPrompt(query))
-        await self.agentPlanning.exec(messageNo, llm)
+        await self.agentPlanning.exec(messageNo)
 
 taskGraph = AgentTaskGraphBuild()

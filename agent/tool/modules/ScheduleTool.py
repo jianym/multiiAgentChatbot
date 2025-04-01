@@ -1,16 +1,21 @@
 from datetime import datetime
 
-from agent.AgentGraph import Node
-from agent.model.BaseModel import BaseModel
+from agent.AgentTool import Tool
+from agent.model.DeepseekModel import llm
 import json
+
 from dao.AgentTaskDao import agentTaskDao
 from model.AgentTask import AgentTask
 from common.TransactionManager import Propagation, transactional
 from sqlalchemy.ext.asyncio import AsyncSession
 
-class ScheduleTool(Node):
+class ScheduleTool(Tool):
 
-    def getPrompt(self):
+    def __init__(self):
+        super().__init__()
+        self.llm = llm
+
+    def getPrompt(self, messageNo=None):
         content = """
         你是一名任务计划管理助手，可以使用已有工具解决问题。
         你的工作职责是分别提取和分割触发时间和触发内容和任务名称并调用工具对任务计划进行管理
@@ -19,11 +24,11 @@ class ScheduleTool(Node):
           - 任务名称：当前任务的名称，任务的标识
         
         返回json格式:
-        {"status":<int>,"reply":<string>,"tool_use": <bool>, "tool_name":<string>,"args":<list>}} 
+        {"code":<int>,"reply":<string>,"tool_use": <bool>, "tool_name":<string>,"args":<list>}} 
        
         返回值说明:
-          - `status`：1 -> 触发时间和触发内容缺失, 2 -> 执行成功
-          - `reply`: `status` 为 2 -> 提供问题解决信息， `status` 为 1 -> 需要补充的信息 
+          - `code`：1 -> 触发时间和触发内容缺失, 0 -> 执行成功
+          - `reply`: `code` 为 0 -> 提供问题解决信息， `code` 为 1 -> 需要补充的信息 
           - `tool_use`:  true -> 需使用工具, false -> 不使用工具
           - `tool_name`: 使用的工具名称
           - `args`: 工具所需的参数列表
@@ -50,15 +55,6 @@ class ScheduleTool(Node):
               """
         return desc
 
-    def create(self,cron: str,content: str):
-        pass
-
-    def update(self,cron: str,content: str,id: str):
-        pass
-
-    def delete(self,id: str):
-        pass
-
     def queryName(self) -> str:
         return "ScheduleTool"
 
@@ -80,12 +76,9 @@ class ScheduleTool(Node):
 
 
 
-    async def exec(self, messageNo: str,llm: BaseModel) -> str:
-        response = await llm.acall(json.dumps(self.messageDict[messageNo]))
-        print(response)
-        jsonData = json.loads(response)
-        self.reply = jsonData["reply"]
-        if jsonData["status"] == 2:
+    async def action(self,messageNo: str,jsonData: dict):
+
+        if jsonData["code"] == 0:
                 if jsonData["tool_name"] == "insert":
                      await self.insert(events=jsonData["args"][0])
                 elif jsonData["tool_name"] == "query":
@@ -93,9 +86,7 @@ class ScheduleTool(Node):
                      jsonData["data"] = json.dumps(responseInstance, default=self.datetimeConverter, ensure_ascii=False)
                      self.reply =self.reply + " " + jsonData["data"]
                      jsonData["reply"] = self.reply
-
-        self.appendMessage(messageNo, {"role": "assistant", "content": self.reply})
-        return json.dumps(jsonData)
+        return jsonData
 
     def datetimeConverter(self,obj):
         if isinstance(obj, datetime):
