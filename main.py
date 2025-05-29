@@ -1,12 +1,18 @@
+import os
+
 from fastapi import FastAPI
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
+from starlette.staticfiles import StaticFiles
 
+from controller import speech
 from controller import chat
 from controller import knowledge
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 app = FastAPI()
+app.include_router(speech.router)
 app.include_router(chat.router)
 app.include_router(knowledge.router)
 
@@ -34,6 +40,8 @@ class SessionValidationMiddleware(BaseHTTPMiddleware):
 
         # 在响应返回之前，你可以在这里做一些后置操作（例如日志记录）
         return response
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 app.add_middleware(SessionValidationMiddleware)

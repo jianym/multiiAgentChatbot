@@ -40,7 +40,8 @@ class QwenModel(BaseModel):
             # "top_p": top_k,
             # "frequency_penalty": frequencyPenalty
         }
-        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl_context=ssl_context)) as session:
+        timeout = aiohttp.ClientTimeout(total=120)
+        async with aiohttp.ClientSession(timeout=timeout,connector=aiohttp.TCPConnector(ssl_context=ssl_context)) as session:
             async with session.post(f"{self.api_url}/chat/completions", json=payload, headers=headers) as response:
                 response.raise_for_status()  # 抛出HTTP异常
                 self.responseData = ""

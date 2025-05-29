@@ -18,7 +18,6 @@ celeryApp.conf.update(
 )
 
 
-
 @celeryApp.task
 def taskGraphJob(taskId: str, taskContent: str):
     print("Task is running...")
@@ -46,8 +45,6 @@ class AppCelery:
             taskGraphJob.s(taskId=taskId, taskContent=taskContent),  # 任务函数和其参数
             name=f"task-{taskId}"  # 为任务命名，确保唯一
         )
-        print(cron)
-        print(taskContent)
 
     def removeDynamicTask(self, taskId):
         taskName = f"task-{taskId}"
