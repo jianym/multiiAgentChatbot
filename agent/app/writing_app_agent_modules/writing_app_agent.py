@@ -52,6 +52,6 @@ class WritingAppAgent(AgentNode):
 
             if agent_name:
                 agent_instance = agent_import.get_agent(agent_name)
-                agent_instance.appendMessage(chat_no,
+                agent_instance.append_message(chat_no,
                                              {"role": "user", "content": json.dumps(self.message_dict[chat_no][0:-1])})
                 return await agent_instance.exec(chat_no)
