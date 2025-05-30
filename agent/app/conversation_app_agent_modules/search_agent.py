@@ -137,7 +137,8 @@ class SearchAgent(AgentNode):
             - `source`: 来源，引用的搜索链接列表
         """
         result = await self.llm.acall(json.dumps([{"role":"user","content": response_prompt}]))
-        return json.loads(result)
+        response_data = result["choices"][0]["message"]["content"]
+        return json.loads(response_data)
 
     async def getEmbeddingAsync(self, text):
         return await asyncio.to_thread(bgeModel.getEmbedding, text)

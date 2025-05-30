@@ -30,8 +30,8 @@ class DeepReSearchAgent(AgentNode):
             
 
         你必须严格按照如下步骤流程执行，不可跳过中间步骤:
-            1. infer: 理解用户意图，给出用户的真正意图并一步一步思考解决用户问题的解决方案（应包含需要检索的信息列表及检索方式，以及需要检索这些信息的原因）
-            2. retrieval: 根据解决方案列出需要的检索的信息及信息的检索方式,选择相关工具传入相关参数进行信息检索
+            1. infer: 理解用户意图，给出用户的真正意图并一步一步思考解决用户问题的解决方案（应包含需要检索的所有信息（应包含检索信息的相关细节）列表及检索方式，以及需要检索这些信息的原因）
+            2. retrieval: 根据解决方案列出需要的检索的所有信息列表及信息的检索方式,选择相关工具传入相关参数进行信息检索
             3. answer: 给出一个结构完整，格式清晰，内容充实，易于阅读的最终答案
             
         解决方案例子:
@@ -109,23 +109,23 @@ class DeepReSearchAgent(AgentNode):
             self.append_message(chat_no,{"role": "user", "content": f"""已完成推理思考，执行retrieval，进行信息检索"""})
             return await self.exec(chat_no)
         if json_data["step"] == "retrieval":
-            search_data = []
             reply = ast.literal_eval(json_data["reply"])
-            # search_data.append(reply["args"][0])
-            search_data.extend(reply["args"][0])
-            search_result = await self.info_search(chat_no,search_data)
-            search_result = str(search_result)
-            self.append_message(chat_no,{"role": "user", "content": f"""已完成检索，给出最终答案，工具搜索结果: {search_result}"""})
+            search_results = []
+            for arg in reply["args"]:
+                search_result = await self.web_search(chat_no,arg["question"])
+                search_result = str(search_result)
+                search_results.append(search_result)
+            self.append_message(chat_no,{"role": "user", "content": f"""已完成检索，给出最终答案，工具搜索结果: {search_results}"""})
             return await self.exec(chat_no)
         return json_data
 
-    async def info_search(self,chat_no, search_datas):
-        for search_data in search_datas:
-            return await self.web_search(chat_no, search_data)
+    # async def info_search(self,chat_no, search_datas):
+    #     for search_data in search_datas:
+    #         return await self.web_search(chat_no, search_data)
 
     async def web_search(self,chat_no: str, query) -> list:
         web_result = []
-        search_instance.appendMessage(chat_no, {"role": "user", "content": query})
+        search_instance.append_message(chat_no, {"role": "user", "content": query})
         response = await search_instance.exec(chat_no)
         if response and response["code"] == 0:
                web_result.append(response["reply"])

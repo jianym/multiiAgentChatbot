@@ -1,4 +1,7 @@
 from datetime import datetime
+
+from sqlalchemy import text
+
 from agent.agent_node import AgentNode
 from agent.model.DeepseekModel import llm
 import json

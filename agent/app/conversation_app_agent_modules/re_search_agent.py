@@ -118,7 +118,12 @@ class ReSearchAgent(AgentNode):
 
 
     async def query_search(self,chat_no,search_data):
-        return await search(chat_no, search_data)
+        results = []
+        for question in search_data:
+            search.append_message(chat_no,{"role": "user","content":question})
+            result = await search.exec(chat_no)
+            results.append(result)
+        return results
 
 instance = ReSearchAgent()
 
