@@ -2,9 +2,6 @@ import json
 
 from agent.agent_memory import memory
 from agent.info_context import InfoContext
-from service.knowkledgeService import knowledageServiceInstance
-from agent.context.UserTagContext import userTag
-from agent.model.DeepseekModel import llm
 class MemoryContextManager:
 
     def __init__(self,chat_no: str, query: str):

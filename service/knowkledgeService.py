@@ -104,9 +104,9 @@ class KnowledageService:
                     filteredResults.append(
                         {"para": result["entity"]["para"], "file_path": result["entity"]["file_path"]})
         if filteredResults:
-            # map_result = await self.map(query, filteredResults, "file_path", 2048)
-            # if map_result:
-            return await self.summary_llm(query, filteredResults)
+            map_result = await self.map(query, filteredResults, "file_path", 2048)
+            if map_result:
+                return await self.summary_llm(query, map_result)
         return None
 
     async def map(self, query: str, contents: list, map_key: str, max_size: int):

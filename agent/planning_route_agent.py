@@ -102,17 +102,18 @@ class PlanningRouteAgent(AgentNode):
             return await self.exec(chat_no)
         if json_data["step"] == "task":
             tasks = ast.literal_eval(json_data["reply"])
-            task_results = []
+
             for task in tasks:
                 agent_instance = agent_import.get_agent(task["agent_name"])
 
                 agent_instance.append_message(chat_no,
+
                                              {"role": "user", "content": json.dumps(self.message_dict[chat_no][0:-1])})
                 agent_instance.append_message(chat_no,
                                              {"role": "user", "content": f"""当前任务: {task["task"]}"""})
                 result = await agent_instance.exec(chat_no)
-                task_results.append(result)
-            self.append_message(chat_no,{"role": "user", "content": f"""任务分配及执行阶段已完成,执行final阶段给出最终答案。任务执行结果: {task_results} """})
+                self.append_message(chat_no,{"role":"assistant","content":f"""任务: {task["task"]} 的执行结果为:{result} """ })
+            self.append_message(chat_no,{"role": "user", "content": f"""任务分配及执行阶段已完成,执行final阶段给出最终答案。"""})
             return await self.exec(chat_no)
         return json_data
 

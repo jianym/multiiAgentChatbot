@@ -68,7 +68,7 @@ class OfficeGenAgent(AgentNode):
                     你是一名公文摘要写作助手，你的目标根据上下信息生成公文摘要。
 
                     基本信息:
-                    {self.getContextData(chat_no, "baseInfo")}
+                    {self.get_context_data(chat_no, "baseInfo")}
 
                     你必须严格按照如下步骤流程执行:
                         1.理解用户意图
@@ -101,7 +101,7 @@ class OfficeGenAgent(AgentNode):
             你是一名公文目录写作助手，你的目标根据上下信息生成公文目录。
             
             基本信息:
-            {self.getContextData(chat_no, "baseInfo")}
+            {self.get_context_data(chat_no, "baseInfo")}
             
             你必须严格按照如下步骤流程执行:
                 1.理解用户意图
@@ -163,7 +163,7 @@ class OfficeGenAgent(AgentNode):
            上下文信息:
 
                 1. 补充信息
-                {self.getContextData(chat_no, "baseInfo")}
+                {self.get_context_data(chat_no, "baseInfo")}
 
                 2.参考标题，需作为公文标题核心内容展开
                 {reference_title}
