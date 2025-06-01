@@ -109,7 +109,7 @@ async def getDocumentsFromLinks(links):
                 docs.extend(htmlDocument(res.text, link))
 
         except Exception as e:
-            html = fetch_with_playwright(link)
+            html = await fetch_with_playwright(link)
             if html:
                 docs.extend(htmlDocument(html, link))
             else:
